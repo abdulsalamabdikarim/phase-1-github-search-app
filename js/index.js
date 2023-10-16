@@ -1,6 +1,6 @@
-document.addEventListener("DOMContentLoaded", populatePage);
+document.addEventListener("DOMContentLoaded", userSearch);
 
-function populatePage(){
+function userSearch(){
     const form = document.querySelector('#github-form');
     const search = document.querySelector('#search');
     form.addEventListener('submit',(e) => {
@@ -10,26 +10,24 @@ function populatePage(){
         .then(response => response.json())
         .then (data => {
             const usersArray = data.items;
-            console.log(usersArray);
+            //console.log(usersArray);
             const userList = document.querySelector('#user-list');
             userList.innerHTML = '';
             const repoUl = document.querySelector('#repos-list');
             repoUl.innerHTML = '';
-            //search.value = '';
+            search.value = '';
             usersArray.forEach(element => {
                 const list = document.createElement('li');
                 list.innerHTML = `<img src = \'${element.avatar_url}\' width = \'100px\' height = \'100px\' /> Username: ${element.login} =><a href = ${element.html_url}> Github Profile </a>`;
                 userList.appendChild(list);
-                list.addEventListener('click', repoSearch);
-            });
-            
+                list.addEventListener('click', () => repoSearch(`${element.login}`));
+            });           
         });
         })
 }
 
-function repoSearch(){
-    const search = document.querySelector('#search');
-    fetch(`https://api.github.com/users/${search.value}/repos`)
+function repoSearch(username){
+    fetch(`https://api.github.com/users/${username}/repos`)
     .then(response => response.json())
     .then (data => {
         //console.log(data[1].name);
